@@ -114,114 +114,80 @@ function update() {
   }
 }
 
-function drawRect(x, y, w, h, color) {
-  ctx.fillStyle = color;
-  ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
-}
-
 function drawBackground() {
   const gradient = ctx.createLinearGradient(0, 0, 0, GAME_HEIGHT);
-  gradient.addColorStop(0, palette.skyTop);
-  gradient.addColorStop(1, palette.skyBottom);
+  gradient.addColorStop(0, "#79c7ff");
+  gradient.addColorStop(1, "#d8f0ff");
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
-  const scrollBack = (frame * 0.22) % (GAME_WIDTH + 130);
-  for (let i = -1; i < 4; i += 1) {
-    const x = i * 170 - scrollBack;
-    drawRect(x + 36, GAME_HEIGHT - 230, 84, 76, palette.hillBack);
-    drawRect(x + 24, GAME_HEIGHT - 206, 108, 52, palette.hillBack);
-    drawRect(x + 14, GAME_HEIGHT - 154, 128, 24, palette.hillBack);
-  }
-
-  const scrollFront = (frame * 0.4) % (GAME_WIDTH + 160);
-  for (let i = -1; i < 4; i += 1) {
-    const x = i * 188 - scrollFront;
-    drawRect(x + 30, GAME_HEIGHT - 180, 100, 70, palette.hillFront);
-    drawRect(x + 15, GAME_HEIGHT - 150, 130, 40, palette.hillFront);
-  }
-
-  const cloudOffset = (frame * 0.28) % (GAME_WIDTH + 120);
-  for (let i = -1; i < 4; i += 1) {
-    const x = i * 150 - cloudOffset;
-    drawRect(x + 15, 72, 32, 16, palette.cloud);
-    drawRect(x, 84, 64, 16, palette.cloud);
-    drawRect(x + 22, 96, 24, 8, palette.cloud);
-  }
-
-  drawRect(0, GAME_HEIGHT - 66, GAME_WIDTH, 10, palette.grassTop);
-  drawRect(0, GAME_HEIGHT - 56, GAME_WIDTH, 56, palette.ground);
-
-  for (let x = 8; x < GAME_WIDTH; x += 28) {
-    drawRect(x, GAME_HEIGHT - 45, 8, 8, palette.groundShade);
-    drawRect(x + 12, GAME_HEIGHT - 22, 6, 6, palette.dirtDot);
-  }
+  ctx.fillStyle = "#b8e3a5";
+  ctx.fillRect(0, GAME_HEIGHT - 56, GAME_WIDTH, 56);
 }
 
 function drawBird() {
-  const x = Math.round(bird.x);
-  const y = Math.round(bird.y);
-  const flapTilt = Math.max(-8, Math.min(8, bird.velocity * 2.5));
+  ctx.fillStyle = "#ffdf4d";
+  ctx.beginPath();
+  ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
+  ctx.fill();
 
-  drawRect(x - 16, y - 14, 30, 24, "#ffe066");
-  drawRect(x - 18, y - 4, 10, 12, "#ffe066");
-  drawRect(x - 8, y + 4, 18, 8, "#f6c941");
+  ctx.fillStyle = "#f6a400";
+  ctx.beginPath();
+  ctx.moveTo(bird.x + 7, bird.y);
+  ctx.lineTo(bird.x + 26, bird.y - 4);
+  ctx.lineTo(bird.x + 7, bird.y + 7);
+  ctx.closePath();
+  ctx.fill();
 
-  drawRect(x - 2, y - 2 + flapTilt * 0.25, 18, 8, "#f1b93a");
-
-  drawRect(x + 11, y - 8, 10, 8, "#f3a334");
-  drawRect(x + 17, y - 6, 8, 4, "#fff2ab");
-
-  drawRect(x + 3, y - 9, 4, 4, "#1c1c1c");
-  drawRect(x + 4, y - 8, 2, 2, palette.textLight);
-}
-
-function drawPipe(x, topHeight) {
-  const w = pipeConfig.width;
-  const gapY = topHeight + pipeConfig.gap;
-
-  drawRect(x, 0, w, topHeight, palette.pipeBody);
-  drawRect(x + w - 12, 0, 12, topHeight, palette.pipeShade);
-
-  drawRect(x - 6, topHeight - 16, w + 12, 16, palette.pipeCap);
-  drawRect(x + w - 10, topHeight - 16, 10, 16, palette.pipeShade);
-
-  drawRect(x, gapY, w, GAME_HEIGHT - gapY, palette.pipeBody);
-  drawRect(x + w - 12, gapY, 12, GAME_HEIGHT - gapY, palette.pipeShade);
-
-  drawRect(x - 6, gapY, w + 12, 16, palette.pipeCap);
-  drawRect(x + w - 10, gapY, 10, 16, palette.pipeShade);
+  ctx.fillStyle = "#1a1a1a";
+  ctx.beginPath();
+  ctx.arc(bird.x + 5, bird.y - 5, 3.2, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 function drawPipes() {
+  ctx.fillStyle = "#2da457";
   for (const pipe of pipes) {
-    drawPipe(pipe.x, pipe.topHeight);
-  }
-}
+    ctx.fillRect(pipe.x, 0, pipeConfig.width, pipe.topHeight);
+    ctx.fillRect(
+      pipe.x,
+      pipe.topHeight + pipeConfig.gap,
+      pipeConfig.width,
+      GAME_HEIGHT - (pipe.topHeight + pipeConfig.gap)
+    );
 
-function drawOutlinedText(text, x, y, size = 20, align = "left") {
-  ctx.font = `800 ${size}px Verdana, sans-serif`;
-  ctx.textAlign = align;
-  ctx.lineWidth = Math.ceil(size / 7);
-  ctx.strokeStyle = palette.textLight;
-  ctx.strokeText(text, x, y);
-  ctx.fillStyle = palette.textDark;
-  ctx.fillText(text, x, y);
+    ctx.fillStyle = "#228047";
+    ctx.fillRect(pipe.x - 4, pipe.topHeight - 14, pipeConfig.width + 8, 14);
+    ctx.fillRect(pipe.x - 4, pipe.topHeight + pipeConfig.gap, pipeConfig.width + 8, 14);
+    ctx.fillStyle = "#2da457";
+  }
 }
 
 function drawText() {
-  drawOutlinedText(`Score ${score}`, 16, 38, 28);
-  drawOutlinedText(`Best ${highScore}`, 16, 66, 20);
+  ctx.fillStyle = "#0c3754";
+  ctx.font = "700 28px Inter, sans-serif";
+  ctx.fillText(`Score: ${score}`, 18, 40);
+
+  ctx.font = "600 18px Inter, sans-serif";
+  ctx.fillText(`High score: ${highScore}`, 18, 68);
 
   if (!gameStarted) {
-    drawOutlinedText("PRESS SPACE", GAME_WIDTH / 2, GAME_HEIGHT / 2 - 20, 30, "center");
-    drawOutlinedText("OR TAP TO START", GAME_WIDTH / 2, GAME_HEIGHT / 2 + 16, 18, "center");
+    ctx.fillStyle = "#0c3754";
+    ctx.font = "700 26px Inter, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Klik of druk op spatie", GAME_WIDTH / 2, GAME_HEIGHT / 2 - 20);
+    ctx.font = "600 20px Inter, sans-serif";
+    ctx.fillText("om te starten", GAME_WIDTH / 2, GAME_HEIGHT / 2 + 12);
+    ctx.textAlign = "start";
   } else if (!running) {
-    drawOutlinedText("GAME OVER", GAME_WIDTH / 2, GAME_HEIGHT / 2 - 8, 42, "center");
-    drawOutlinedText("KLIK OP OPNIEUW SPELEN", GAME_WIDTH / 2, GAME_HEIGHT / 2 + 28, 16, "center");
+    ctx.fillStyle = "#0c3754";
+    ctx.font = "800 38px Inter, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Game Over", GAME_WIDTH / 2, GAME_HEIGHT / 2 - 8);
+    ctx.font = "600 22px Inter, sans-serif";
+    ctx.fillText("Druk op opnieuw spelen", GAME_WIDTH / 2, GAME_HEIGHT / 2 + 28);
+    ctx.textAlign = "start";
   }
-
-  ctx.textAlign = "start";
 }
 
 function render() {
