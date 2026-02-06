@@ -4,6 +4,26 @@ const restartBtn = document.getElementById("restartBtn");
 
 const GAME_WIDTH = canvas.width;
 const GAME_HEIGHT = canvas.height;
+const SCALE = 4;
+
+ctx.imageSmoothingEnabled = false;
+
+const palette = {
+  skyTop: "#84d8ff",
+  skyBottom: "#6bc7ff",
+  cloud: "#f6fcff",
+  hillBack: "#7fcf67",
+  hillFront: "#5bbd54",
+  grassTop: "#6ce45f",
+  ground: "#c78746",
+  groundShade: "#a36936",
+  dirtDot: "#7f4f22",
+  pipeBody: "#2fc162",
+  pipeShade: "#1e934a",
+  pipeCap: "#4add77",
+  textDark: "#172455",
+  textLight: "#ffffff"
+};
 
 const bird = {
   x: 96,
